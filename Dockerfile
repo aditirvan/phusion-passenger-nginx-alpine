@@ -1,10 +1,9 @@
 FROM ruby:2.7.4-alpine
 LABEL MAINTAINER="Adhithia Irvan Rachmawan <adhithia.irvan@gmail.com>"
 
-
+ENV NGINX_PATH="/etc/nginx"
 ENV APP_HOME="/usr/src/app" \
     PASSENGER_VERSION="6.0.12" \
-    NGINX_PATH="/etc/nginx" \
     PATH="/opt/passenger/bin:${NGINX_PATH}/sbin:$PATH"
 
 RUN PACKAGES="libcurl freetds curl openssl zlib boost pcre make g++" \
