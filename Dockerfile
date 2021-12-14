@@ -1,36 +1,46 @@
 FROM ruby:2.7.4-alpine
-LABEL MAINTAINER="Adhithia Irvan Rachmawan <adhithia.irvan@gmail.com>"
+LABEL MAINTAINER="Adhithia Irvan Rachmawan"
 
-ENV PASSENGER="6.0.12"
-ENV NGINX_PATH=/opt/nginx
-ENV SRC_PATH=/usr/src
-ENV PASSENGER_PATH=/opt/passenger
-ENV PATH=${PASSENGER_PATH}/bin:${NGIN_PATH}/sbin:$PATH
-ENV PASSENGER_NGINX_APT_SRC_PATH=${SRC_PATH}/passenger-nginx-apt-src
-ENV NGINX_MODULES_PATH=${PASSENGER_NGINX_APT_SRC_PATH}/modules
 
-COPY rules ${PASSENGER_NGINX_APT_SRC_PATH}/
+ENV APP_HOME="/usr/src/app" \
+    PASSENGER_VERSION="6.0.12" \
+    NGINX_PATH="/etc/nginx" \
+    PATH="/opt/passenger/bin:$PATH"
 
-RUN apk add --no-cache --virtual .systemRuntimeDeps \
-    sudo
-RUN apk add --no-cache --virtual .nginxRuntimeDeps \
-    ca-certificates curl libnsl openssl linux-pam lua5.1 perl gd geoip
-RUN apk add --no-cache --virtual .nginxBuildDeps \
-    expat-dev gd-dev geoip-dev libxml2-dev libxslt-dev linux-pam-dev lua5.1-dev perl-dev
-RUN apk add --no-cache --virtual .buildDeps \
-    curl-dev g++ make openssl-dev wget zlib
-RUN apk add --no-cache --virtual .quilt --repository http://mirrors.gigenet.com/alpinelinux/edge/testing quilt
+RUN PACKAGES="mariadb libcurl freetds curl openssl zlib boost pcre make g++" \
+    BUILD_PACKAGES="mariadb-dev freetds-dev curl-dev openssl-dev zlib-dev boost-dev pcre-dev" && \
+    apk add --update --no-cache $PACKAGES $BUILD_PACKAGES
 
-RUN curl -sL http://s3.amazonaws.com/phusion-passenger/releases/passenger-${PASSENGER}.tar.gz | tar -zxC /opt/ \
-    && mv ${PASSENGER_PATH}-${PASSENGER} ${PASSENGER_PATH} \
-    && echo "PATH=${PASSENGER_PATH}/bin:$PATH" >> /etc/bashrc
+#download passenger
+RUN mkdir -p /opt && \
+    curl -L https://s3.amazonaws.com/phusion-passenger/releases/passenger-$PASSENGER_VERSION.tar.gz | tar -xzf - -C /opt && \
+    mv /opt/passenger-$PASSENGER_VERSION /opt/passenger && \
+    export EXTRA_PRE_CFLAGS='-O' EXTRA_PRE_CXXFLAGS='-O' EXTRA_LDFLAGS='-lexecinfo'
 
-RUN echo "Set disable_coredump false" >> /etc/sudo.conf \
-    && echo "docker ALL=(ALL) NOPASSWD: SETENV: ${NGINX_PATH}/sbin/nginx" >> /etc/sudoers \
-    && passenger-config compile-agent --optimize --auto
+#compile agent
+RUN passenger-config compile-agent --auto --optimize && \
+    gem install rack && \
+    passenger-install-nginx-module --auto --auto-download --prefix=${NGINX_PATH} && \
+    passenger-config build-native-support
 
-RUN gem install rack
+#app directory
+RUN mkdir -p /usr/src/app
 
-RUN passenger-install-nginx-module --auto --auto-download --prefix=${NGINX_PATH}
+#cleanup passenger src directory
+RUN rm -rf /tmp/* && \
+    mv /opt/passenger/src/ruby_supportlib /tmp && \
+    mv /opt/passenger/src/nodejs_supportlib /tmp && \
+    mv /opt/passenger/src/helper-scripts /tmp && \
+    rm -rf /opt/passenger/src/* && \
+    mv /tmp/* /opt/passenger/src/
+
+#cleanup
+RUN passenger-config validate-install --auto && \
+    apk del $BUILD_PACKAGES && \
+    rm -rf /var/cache/apk/* \
+    /tmp/* \
+    /opt/passenger/doc
+
+WORKDIR $APP_HOME
 
 CMD ["nginx", "-g", "daemon off;"]
