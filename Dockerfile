@@ -1,5 +1,5 @@
 FROM ruby:2.7.4-alpine
-LABEL MAINTAINER="Adhithia Irvan Rachmawan"
+LABEL MAINTAINER="Adhithia Irvan Rachmawan <adhithia.irvan@gmail.com>"
 
 
 ENV APP_HOME="/usr/src/app" \
@@ -21,7 +21,6 @@ RUN mkdir -p /opt && \
 RUN passenger-config compile-agent --auto --optimize && \
     gem install rack && \
     passenger-install-nginx-module --auto --auto-download --prefix=${NGINX_PATH}
-    #passenger-config build-native-support
 
 #app directory
 RUN mkdir -p /usr/src/app
