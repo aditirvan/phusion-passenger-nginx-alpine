@@ -5,10 +5,10 @@ LABEL MAINTAINER="Adhithia Irvan Rachmawan <adhithia.irvan@gmail.com>"
 ENV APP_HOME="/usr/src/app" \
     PASSENGER_VERSION="6.0.12" \
     NGINX_PATH="/etc/nginx" \
-    PATH="/opt/passenger/bin:$NGINX_PATH/sbin:$PATH"
+    PATH="/opt/passenger/bin:/etc/nginx/sbin:$PATH"
 
-RUN PACKAGES="mariadb libcurl freetds curl openssl zlib boost pcre make g++" \
-    BUILD_PACKAGES="mariadb-dev freetds-dev curl-dev openssl-dev zlib-dev boost-dev pcre-dev" && \
+RUN PACKAGES="libcurl freetds curl openssl zlib boost pcre make g++" \
+    BUILD_PACKAGES="freetds-dev curl-dev openssl-dev zlib-dev boost-dev pcre-dev" && \
     apk add --update --no-cache $PACKAGES $BUILD_PACKAGES
 
 #download passenger
