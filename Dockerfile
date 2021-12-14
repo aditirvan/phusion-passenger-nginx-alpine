@@ -1,6 +1,7 @@
 FROM ruby:2.7.4-alpine
 LABEL MAINTAINER="Adhithia Irvan Rachmawan <adhithia.irvan@gmail.com>"
 
+ENV PASSENGER="6.0.12"
 ENV NGINX_PATH=/opt/nginx
 ENV SRC_PATH=/usr/src
 ENV PASSENGER_PATH=/opt/passenger
