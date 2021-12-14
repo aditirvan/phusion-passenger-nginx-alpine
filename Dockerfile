@@ -42,5 +42,3 @@ RUN passenger-config validate-install --auto && \
     /opt/passenger/doc
 
 WORKDIR $APP_HOME
-
-CMD ["/opt/nginx/sbin/nginx"]
