@@ -20,7 +20,7 @@ RUN mkdir -p /opt && \
 #compile agent
 RUN passenger-config compile-agent --auto --optimize && \
     gem install rack && \
-    passenger-install-nginx-module --auto --auto-download --prefix=${NGINX_PATH} &&
+    passenger-install-nginx-module --auto --auto-download --prefix=${NGINX_PATH}
     #passenger-config build-native-support
 
 #app directory
