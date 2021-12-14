@@ -1,4 +1,7 @@
 FROM ruby:2.7.4-alpine
+LABEL MAINTAINER="Adhithia Irvan Rachmawan"
+
+
 ENV APP_HOME="/usr/src/app" \
     PASSENGER_VERSION="6.0.12" \
     PATH="/opt/passenger/bin:$PATH"
