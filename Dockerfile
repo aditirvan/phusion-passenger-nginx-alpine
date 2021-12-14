@@ -20,8 +20,8 @@ RUN mkdir -p /opt && \
 #compile agent
 RUN passenger-config compile-agent --auto --optimize && \
     gem install rack && \
-    passenger-install-nginx-module --auto --auto-download --prefix=${NGINX_PATH} && \
-    passenger-config build-native-support
+    passenger-install-nginx-module --auto --auto-download --prefix=${NGINX_PATH} &&
+    #passenger-config build-native-support
 
 #app directory
 RUN mkdir -p /usr/src/app
@@ -43,4 +43,4 @@ RUN passenger-config validate-install --auto && \
 
 WORKDIR $APP_HOME
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/opt/nginx/sbin/nginx"]
