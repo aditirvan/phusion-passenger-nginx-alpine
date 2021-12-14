@@ -5,7 +5,7 @@ LABEL MAINTAINER="Adhithia Irvan Rachmawan"
 ENV APP_HOME="/usr/src/app" \
     PASSENGER_VERSION="6.0.12" \
     NGINX_PATH="/etc/nginx" \
-    PATH="/opt/passenger/bin:$PATH"
+    PATH="/opt/passenger/bin:$NGINX_PATH/sbin:$PATH"
 
 RUN PACKAGES="mariadb libcurl freetds curl openssl zlib boost pcre make g++" \
     BUILD_PACKAGES="mariadb-dev freetds-dev curl-dev openssl-dev zlib-dev boost-dev pcre-dev" && \
@@ -42,3 +42,5 @@ RUN passenger-config validate-install --auto && \
     /opt/passenger/doc
 
 WORKDIR $APP_HOME
+
+CMD ["nginx", "-g", "daemon off;"]
