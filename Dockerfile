@@ -6,7 +6,7 @@ ENV APP_HOME="/usr/src/app" \
     PASSENGER_VERSION="6.0.12" \
     PATH="/opt/passenger/bin:${NGINX_PATH}/sbin:$PATH"
 
-RUN PACKAGES="curl" \
+RUN PACKAGES="curl" && \
     apk add --update --no-cache $PACKAGES
 
 #download passenger
