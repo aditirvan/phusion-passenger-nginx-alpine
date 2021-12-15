@@ -6,9 +6,7 @@ ENV APP_HOME="/usr/src/app" \
     PASSENGER_VERSION="6.0.12" \
     PATH="/opt/passenger/bin:${NGINX_PATH}/sbin:$PATH"
 
-RUN PACKAGES="libcurl freetds curl openssl zlib boost pcre make g++" \
-    BUILD_PACKAGES="freetds-dev curl-dev openssl-dev zlib-dev boost-dev pcre-dev" && \
-    apk add --update --no-cache $PACKAGES $BUILD_PACKAGES
+RUN apk update
 
 #download passenger
 RUN mkdir -p /opt && \
@@ -37,7 +35,6 @@ RUN rm -rf /tmp/* && \
 
 #cleanup
 RUN passenger-config validate-install --auto && \
-    apk del $BUILD_PACKAGES && \
     rm -rf /var/cache/apk/* \
     /tmp/* \
     /opt/passenger/doc
