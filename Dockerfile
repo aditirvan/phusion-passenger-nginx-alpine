@@ -24,6 +24,9 @@ RUN passenger-config compile-agent --auto --optimize && \
 #app directory
 RUN mkdir -p /usr/src/app
 
+#nginx conf directory
+RUN mkdir -p ${NGINX_PATH}/conf.d
+
 #cleanup passenger src directory
 RUN rm -rf /tmp/* && \
     mv /opt/passenger/src/ruby_supportlib /tmp && \
@@ -38,6 +41,9 @@ RUN passenger-config validate-install --auto && \
     rm -rf /var/cache/apk/* \
     /tmp/* \
     /opt/passenger/doc
+
+COPY default.conf ${NGINX_PATH}/conf.d/default.conf
+COPY nginx.conf ${NGINX_PATH}/conf/nginx.conf
 
 WORKDIR $APP_HOME
 
